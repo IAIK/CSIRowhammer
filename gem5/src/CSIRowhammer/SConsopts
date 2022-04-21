@@ -1,0 +1,4 @@
+Import('main')
+main.Append(LIBS='libcryptopp')
+main.Append(LINKFLAGS=['-lcryptopp'])
+print("ello options")

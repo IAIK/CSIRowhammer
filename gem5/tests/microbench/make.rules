@@ -1,0 +1,42 @@
+include ../make.config
+
+CC_X86?=gcc
+CC_ARM?=arm-linux-gnueabi-gcc
+CC_RISCV?=~/opt/riscv/bin/riscv64-unknown-elf-gcc
+OPT?=-O3
+
+#-fno-tree-vectorize 
+CFLAGS+=${OPT} -I../
+
+default: benchX86
+
+all: benchX86 benchARM benchRISCV
+
+X86: benchX86
+
+ARM: benchARM
+
+RISCV: benchRISCV
+
+ifneq ("$(wildcard rand_arr_args.txt)","")
+args := $(shell cat rand_arr_args.txt)
+
+randArr.h: rand_arr_args.txt
+	${PY} ../rand_c_arr.py $(args)
+
+pre_req: randArr.h
+else
+pre_req:
+endif
+
+benchX86: bench.c pre_req
+	${CC_X86} ${CFLAGS} -DMAGIC bench.c --static --std=c99  -lm -o bench.X86
+
+benchARM: bench.c pre_req
+	${CC_ARM} ${CFLAGS} bench.c --static --std=c99 -lm -o bench.ARM
+
+benchRISCV: bench.c pre_req
+	${CC_RISCV} ${CFLAGS} bench.c --static --std=c99 -lm -o bench.RISCV
+
+clean:
+	rm -f bench.X86 bench.ARM bench.RISCV

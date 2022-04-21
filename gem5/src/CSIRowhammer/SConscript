@@ -1,0 +1,12 @@
+Import('*')
+Import('main')
+
+print("-"*100)
+print("execute sconscript")
+
+SimObject("CSIMemCtrl.py")
+Source("CSIMemCtrl.cc")
+
+Source("IntegrityInformation.cpp")
+
+DebugFlag("CSIRowhammer")
